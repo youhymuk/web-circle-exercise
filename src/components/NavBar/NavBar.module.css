@@ -7,9 +7,9 @@
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 10;
   height: var(--nav-height);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  
 }
 
 .navBarContentWrapper {

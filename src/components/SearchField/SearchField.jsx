@@ -2,7 +2,7 @@ import { setQueryParam } from '../../utils/qsUtils';
 
 import styles from './SearchField.module.css';
 
-const SearchField = ({ value, onSetValue }) => {
+const SearchField = ({ disabled, value, onSetValue }) => {
   const handleInputChange = (event) => {
     const value = event.target.value;
     onSetValue(value);
@@ -16,7 +16,13 @@ const SearchField = ({ value, onSetValue }) => {
 
   return (
     <div className={styles.wrapper}>
-      <input placeholder="Filter dishes..." type="text" value={value} onChange={handleInputChange} />
+      <input
+        placeholder="Filter dishes..."
+        type="text"
+        disabled={disabled}
+        value={value}
+        onChange={handleInputChange}
+      />
       <button type="button" onClick={handleValueReset}>
         X
       </button>
