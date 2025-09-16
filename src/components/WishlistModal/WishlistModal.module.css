@@ -1,0 +1,73 @@
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  padding: 24px;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.wishlistItems {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.wishlistItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.wishlistItem img {
+  width: 150px;
+}
+
+.removeBtn {
+  display: block;
+  padding: 0 0;
+  width: 40px;
+  height: 40px;
+  top: 15px;
+  right: 5px;
+  font-size: 25px;
+  color: #000;
+  background-color: transparent;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform ease 0.2s;
+}
+
+.removeBtn:hover {
+  background-color: transparent;
+}
+
+.closeBtn {
+  position: absolute;
+  padding: 0 0;
+  width: 40px;
+  height: 40px;
+  top: 15px;
+  right: 5px;
+  font-size: 20px;
+  color: #000;
+  background-color: transparent;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform ease 0.2s;
+}
+
+.closeBtn:hover {
+  background-color: transparent;
+}

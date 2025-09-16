@@ -1,16 +1,30 @@
-import { useNavigate } from 'react-router-dom';
-import Button from '../Button/Button';
-import styles from './MenuItem.module.css';
+import { Link } from "react-router-dom";
+
+import { useWishlist } from "../../contexts/WishlistContext";
+import menuItemStyles from "./MenuItem.module.css";
+import LikeButton from "../LikeButton/LikeButton";
+import buttonStyles from "../Button/Button.module.css";
 
 const MenuItem = ({ dish }) => {
   const { strMeal: name, strMealThumb: image } = dish;
-  const navigate = useNavigate();
+
+  const { wishlist, toggleFavoriteDish } = useWishlist();
+
+  const isFavorite = wishlist.some((item) => item.idMeal === dish.idMeal);
+
+  const handleLikeClick = () => {
+    toggleFavoriteDish(dish);
+  };
+
   return (
-    <div className={styles.menuItem}>
+    <div className={menuItemStyles.menuItem}>
       <h3>{name}</h3>
+      <LikeButton isFavorite={isFavorite} onClick={handleLikeClick} />
       <img src={image} alt={name} />
-      <div className={styles.menuItemBtnContainer}>
-        <Button onClick={() => navigate(`/meals/${dish.idMeal}`)}>Details</Button>
+      <div className={menuItemStyles.menuItemBtnContainer}>
+        <Link className={buttonStyles.button} to={`/meals/${dish.idMeal}`}>
+          Details
+        </Link>
       </div>
     </div>
   );

@@ -1,16 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
+import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-import NavBar from '../components/NavBar/NavBar.jsx';
-import SearchField from '../components/SearchField/SearchField.jsx';
-import MenuList from '../components/MenuList/MenuList.jsx';
-import { getQueryParam } from '../utils/qsUtils.js';
+import NavBar from "../components/NavBar/NavBar.jsx";
+import SearchField from "../components/SearchField/SearchField.jsx";
+import MenuList from "../components/MenuList/MenuList.jsx";
+import { getQueryParam } from "../utils/qsUtils.js";
+import LikeButton from "../components/LikeButton/LikeButton.jsx";
+import WishlistModal from "../components/WishlistModal/WishlistModal.jsx";
+import { WishlistProvider } from "../contexts/WishlistContext";
+import styles from "./RestaurantView.module.css";
 
 const RestaurantView = () => {
-  const qsSearch = getQueryParam('search')?.toString() || '';
+  const qsSearch = getQueryParam("search")?.toString() || "";
 
   const [searchValue, setSearchValue] = useState(qsSearch);
   const [dishes, setDishes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isWishlistOpened, setIsWishlistOpened] = useState(false);
+
+  const handleWishlistToggle = () => {
+    setIsWishlistOpened((isWishlistOpened) => !isWishlistOpened);
+  };
 
   // useDebouncedCallback takes a function as a parameter and as the second parameter
   // the number of milliseconds it should wait until it is actually called so a user
@@ -39,6 +49,9 @@ const RestaurantView = () => {
           return;
         }
         setDishes([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
 
     // This cleanup function is to prevent multiple API calls coming back out of sequence and setting the value of our dishes list.
@@ -60,10 +73,21 @@ const RestaurantView = () => {
     <>
       <NavBar>
         <h1>ReDI React Restaurant</h1>
-
-        <SearchField value={searchValue} onSetValue={setSearchValue} />
+        <SearchField
+          disabled={isLoading}
+          value={searchValue}
+          onSetValue={setSearchValue}
+        />
+        <LikeButton onClick={handleWishlistToggle} />
       </NavBar>
-      <MenuList dishes={dishes} />
+      <WishlistProvider>
+        {isLoading ? (
+          <h2 className={styles.loading}>Loading...⏳</h2>
+        ) : (
+          <MenuList dishes={dishes} />
+        )}
+        {isWishlistOpened && <WishlistModal onClose={handleWishlistToggle} />}
+      </WishlistProvider>
     </>
   );
 };

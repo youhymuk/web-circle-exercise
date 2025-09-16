@@ -1,10 +1,14 @@
-import styles from './MenuList.module.css';
-import MenuItem from '../MenuItem/MenuItem';
+import MenuItem from "../MenuItem/MenuItem";
+import styles from "./MenuList.module.css";
 
 const MenuList = ({ dishes }) => (
   <div className={styles.restaurantWrapper}>
     <div className={styles.menu}>
-      {dishes.length > 0 ? dishes.map((dish) => <MenuItem dish={dish} key={dish.idMeal} />) : <p>No dishes found :(</p>}
+      {dishes?.length > 0 ? (
+        dishes.map((dish) => <MenuItem key={dish.idMeal} dish={dish} />)
+      ) : (
+        <p>No dishes found :(</p>
+      )}
     </div>
   </div>
 );
