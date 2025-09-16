@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import MenuItem from "../components/MenuItem/MenuItem.jsx";
 
-import styles from "./RestaurantView.module.css";
-import NavBar from "../components/NavBar/NavBar.jsx";
-import SearchField from "../components/SearchField/SearchField.jsx";
+import NavBar from '../components/NavBar/NavBar.jsx';
+import SearchField from '../components/SearchField/SearchField.jsx';
+import MenuList from '../components/MenuList/MenuList.jsx';
+import { getQueryParam } from '../utils/qsUtils.js';
 
 const RestaurantView = () => {
+  const qsSearch = getQueryParam('search')?.toString() || '';
+
+  const [searchValue, setSearchValue] = useState(qsSearch);
   const [dishes, setDishes] = useState([]);
 
   // useDebouncedCallback takes a function as a parameter and as the second parameter
@@ -15,26 +18,28 @@ const RestaurantView = () => {
   // This is to optimize user experience and communication with the server
   const debouncedEffectHook = useDebouncedCallback(() => {
     let currentEffect = true;
-    fetch(
-      `https://www.themealdb.com/api/json/v1/1/search.php?s=`
-    ).then(res => {
-      if (!res.ok) {
-        return { meals: null };
-      }
-      return res.json();
-    }).then(result => {
-      if (!currentEffect) {
-        return;
-      }
-      // The ?? operator turns 'undefined' or 'null' values into a preferred default value on the right side
-      // We know that result.meals can be null if there are no results, so in that case, we provide an empty array for safety
-      setDishes(result.meals ?? []);
-    }).catch(() => {
-      if (!currentEffect) {
-        return;
-      }
-      setDishes([]);
-    })
+
+    fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${qsSearch}`)
+      .then((res) => {
+        if (!res.ok) {
+          return { meals: null };
+        }
+        return res.json();
+      })
+      .then((result) => {
+        if (!currentEffect) {
+          return;
+        }
+        // The ?? operator turns 'undefined' or 'null' values into a preferred default value on the right side
+        // We know that result.meals can be null if there are no results, so in that case, we provide an empty array for safety
+        setDishes(result.meals ?? []);
+      })
+      .catch(() => {
+        if (!currentEffect) {
+          return;
+        }
+        setDishes([]);
+      });
 
     // This cleanup function is to prevent multiple API calls coming back out of sequence and setting the value of our dishes list.
     // Example:
@@ -44,35 +49,21 @@ const RestaurantView = () => {
     //    but the results show pizzas. This is called "stale data"
     return () => {
       currentEffect = false;
-    }
+    };
   }, 500);
 
   // useEffect can take a variable that is a function and does not need to be defined as an anonymous () => {} arrow function
   // This is especially important when using more controlled techniques like debouncing
-  useEffect(debouncedEffectHook, [debouncedEffectHook]);
+  useEffect(debouncedEffectHook, [debouncedEffectHook, qsSearch]);
 
   return (
     <>
       <NavBar>
         <h1>ReDI React Restaurant</h1>
 
-        <SearchField />
+        <SearchField value={searchValue} onSetValue={setSearchValue} />
       </NavBar>
-
-      <div className={styles.restaurantWrapper}>
-        <div className={styles.menu}>
-          {dishes.length > 0 ? (
-            dishes.map((dish) => (
-              <MenuItem
-                dish={dish}
-                key={dish.idMeal}
-              />
-            ))
-          ) : (
-            <p>No dishes found :(</p>
-          )}
-        </div>
-      </div>
+      <MenuList dishes={dishes} />
     </>
   );
 };
